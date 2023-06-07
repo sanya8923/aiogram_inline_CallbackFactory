@@ -88,7 +88,16 @@ async def callback_num_change(
     await callback.answer()
 
 
+# Нажатие на кнопку "confirm"
+@dp.callback_query(NumbersCallBackFactory.filter(F.action == 'finish'))
+async def callback_num_finish(
+        callback: CallbackQuery,
+        callback_data: NumbersCallBackFactory
+        ):
+    user_value = user_data.get(callback.from_user.id, 0)
 
+    await callback.message.edit_text(f'Total: {user_value}')
+    await callback.answer()
 
 
 async def main():
