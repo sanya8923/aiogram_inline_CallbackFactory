@@ -14,16 +14,12 @@ from contextlib import suppress
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token='6204362749:AAEK2ymI8Jac_1uZYrZbL7gBoBu4yl7i37Q')
 dp = Dispatcher()
+user_data = {}
 
 
 class NumbersCallBackFactory(CallbackData, prefix='fabnum'):
     action: str
     value: Optional[int]
-
-
-@dp.message(Command('start'))
-async def cmd_start_bot(message: Message):
-    pass
 
 
 # КЛАВИАТУРА
@@ -46,6 +42,14 @@ async def update_num_text(message: Message, new_value: int):
             f'Write number: {new_value}',
             reply_markup=get_keyboard()
         )
+
+
+@dp.message(Command('start'))
+async def cmd_start_bot(message: Message):
+    user_data[message.from_user.id] = 0
+    await message.answer('Write number: 0',
+                         reply_markup=get_keyboard()
+                         )
 
 
 
