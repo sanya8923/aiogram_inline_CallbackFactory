@@ -7,6 +7,8 @@ from aiogram.filters.command import Command, Message
 from aiogram.filters.callback_data import CallbackData, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.exceptions import TelegramBadRequest
+from aiogram.utils.callback_answer import CallbackAnswerMiddleware
+
 
 from typing import Optional
 from contextlib import suppress
@@ -18,6 +20,7 @@ from config_reader import config
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.bot_token.get_secret_value(), parse_mode='HTML')
 dp = Dispatcher()
+dp.callback_query.middleware(CallbackAnswerMiddleware())
 user_data = {}
 
 
