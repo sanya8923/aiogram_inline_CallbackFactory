@@ -2,13 +2,14 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.filters.command import Command, Message,
+from aiogram.filters.command import Command, Message
 from aiogram.filters.callback_data import CallbackData, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.exceptions import TelegramBadRequest
 
 from typing import Optional
 from contextlib import suppress
+from magic_filter import F
 
 
 logging.basicConfig(level=logging.INFO)
@@ -53,6 +54,7 @@ async def cmd_start_bot(message: Message):
                          reply_markup=get_keyboard()
                          )
 
+
 #  ОБРАБОТКА КАЛБЕКОВ
 @dp.callback_query(NumbersCallBackFactory.filter())
 async def callback_num_change(
@@ -69,4 +71,13 @@ async def callback_num_change(
     else:
         await callback.message.edit_text(f'Total: {user_value}')
     await callback.answer()
+
+
+async def main():
+    await dp.start_polling(bot)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
 
