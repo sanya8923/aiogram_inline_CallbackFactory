@@ -1,0 +1,4 @@
+/inline_test_bot/
+.idea/
+__pycache__/
+.env
