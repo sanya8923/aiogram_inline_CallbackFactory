@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+import config_reader
 from aiogram import Bot, Dispatcher
 from aiogram.filters.command import Command, Message
 from aiogram.filters.callback_data import CallbackData, CallbackQuery
@@ -11,9 +12,11 @@ from typing import Optional
 from contextlib import suppress
 from magic_filter import F
 
+from config_reader import config
+
 
 logging.basicConfig(level=logging.INFO)
-bot = Bot(token='6204362749:AAEK2ymI8Jac_1uZYrZbL7gBoBu4yl7i37Q')
+bot = Bot(token=config.bot_token.get_secret_value(), parse_mode='HTML')
 dp = Dispatcher()
 user_data = {}
 
@@ -56,21 +59,21 @@ async def cmd_start_bot(message: Message):
 
 
 #  ОБРАБОТКА КАЛБЕКОВ (одной функцией)
-@dp.callback_query(NumbersCallBackFactory.filter())
-async def callback_num_change(
-        callback: CallbackQuery,
-        callback_data: NumbersCallBackFactory
-        ):
-    # текущее значение
-    user_value = user_data.get(callback.from_user.id, 0)
-
-    # Если число нужно изменить
-    if callback_data.action == 'change':
-        user_data[callback.from_user.id] = user_value + callback_data.value
-        await update_num_text(callback.message, user_value + callback_data.value)
-    else:
-        await callback.message.edit_text(f'Total: {user_value}')
-    await callback.answer()
+# @dp.callback_query(NumbersCallBackFactory.filter())
+# async def callback_num_change(
+#         callback: CallbackQuery,
+#         callback_data: NumbersCallBackFactory
+#         ):
+#     # текущее значение
+#     user_value = user_data.get(callback.from_user.id, 0)
+#
+#     # Если число нужно изменить
+#     if callback_data.action == 'change':
+#         user_data[callback.from_user.id] = user_value + callback_data.value
+#         await update_num_text(callback.message, user_value + callback_data.value)
+#     else:
+#         await callback.message.edit_text(f'Total: {user_value}')
+#     await callback.answer()
 
 
 #  ОБРАБОТКА КАЛБЕКОВ (двумя функциями)
