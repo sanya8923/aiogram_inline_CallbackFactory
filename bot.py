@@ -55,7 +55,7 @@ async def cmd_start_bot(message: Message):
                          )
 
 
-#  ОБРАБОТКА КАЛБЕКОВ
+#  ОБРАБОТКА КАЛБЕКОВ (одной функцией)
 @dp.callback_query(NumbersCallBackFactory.filter())
 async def callback_num_change(
         callback: CallbackQuery,
@@ -71,6 +71,24 @@ async def callback_num_change(
     else:
         await callback.message.edit_text(f'Total: {user_value}')
     await callback.answer()
+
+
+#  ОБРАБОТКА КАЛБЕКОВ (двумя функциями)
+# Нажатие на одну из кнопок: -2, -1, +1, +2
+@dp.callback_query(NumbersCallBackFactory.filter(F.action == 'change'))
+async def callback_num_change(
+        callback: CallbackQuery,
+        callback_data: NumbersCallBackFactory
+        ):
+    # текущее значение
+    user_value = user_data.get(callback.from_user.id, 0)
+
+    user_data[callback.from_user.id] = user_value + callback_data.value
+    await update_num_text(callback.message, user_value + callback_data.value)
+    await callback.answer()
+
+
+
 
 
 async def main():
