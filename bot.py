@@ -5,8 +5,10 @@ from aiogram import Bot, Dispatcher
 from aiogram.filters.command import Command, Message
 from aiogram.filters.callback_data import CallbackData
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.exceptions import TelegramBadRequest
 
 from typing import Optional
+from contextlib import suppress
 
 
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +26,7 @@ async def cmd_start_bot(message: Message):
     pass
 
 
+# КЛАВИАТУРА
 def get_keyboard():
     builder = InlineKeyboardBuilder()
 
@@ -35,6 +38,14 @@ def get_keyboard():
 
     builder.adjust(4)
     return builder.as_markup()
+
+
+async def update_num_text(message: Message, new_value: int):
+    with suppress(TelegramBadRequest):
+        await message.edit_text(
+            f'Write number: {new_value}',
+            reply_markup=get_keyboard()
+        )
 
 
 
