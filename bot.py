@@ -2,8 +2,8 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.filters.command import Command, Message
-from aiogram.filters.callback_data import CallbackData
+from aiogram.filters.command import Command, Message,
+from aiogram.filters.callback_data import CallbackData, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.exceptions import TelegramBadRequest
 
@@ -36,6 +36,7 @@ def get_keyboard():
     return builder.as_markup()
 
 
+#  ТЕКСТ "Write number:" НАД КЛАВИАТУРОЙ
 async def update_num_text(message: Message, new_value: int):
     with suppress(TelegramBadRequest):
         await message.edit_text(
@@ -44,6 +45,7 @@ async def update_num_text(message: Message, new_value: int):
         )
 
 
+# ЗАПУСК КЛАВИАТУРЫ
 @dp.message(Command('start'))
 async def cmd_start_bot(message: Message):
     user_data[message.from_user.id] = 0
@@ -51,8 +53,20 @@ async def cmd_start_bot(message: Message):
                          reply_markup=get_keyboard()
                          )
 
+#  ОБРАБОТКА КАЛБЕКОВ
+@dp.callback_query(NumbersCallBackFactory.filter())
+async def callback_num_change(
+        callback: CallbackQuery,
+        callback_data: NumbersCallBackFactory
+        ):
+    # текущее значение
+    user_value = user_data.get(callback.from_user.id, 0)
 
-
-
-
+    # Если число нужно изменить
+    if callback_data.action == 'change':
+        user_data[callback.from_user.id] = user_value + callback_data.value
+        await update_num_text(callback.message, user_value + callback_data.value)
+    else:
+        await callback.message.edit_text(f'Total: {user_value}')
+    await callback.answer()
 
